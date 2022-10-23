@@ -19,10 +19,22 @@ public class CpsMod extends SimpleHudMod {
 	@Option
 	private Colour separatorColour = new Colour(64, 64, 64);
 
+        public static boolean enabled;
+
 	@Override
 	public String getId() {
 		return "cps";
 	}
+
+        @Override
+        protected void onEnable() {
+             enabled = true;
+        }
+
+        @Override
+        protected void onDisable() {
+             enabled = false;
+        }
 
 	@Override
 	public void render(Position position, boolean editMode) {
