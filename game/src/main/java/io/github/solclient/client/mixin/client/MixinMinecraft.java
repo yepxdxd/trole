@@ -73,6 +73,12 @@ public abstract class MixinMinecraft implements AccessMinecraft, MCVer.Minecraft
 	private boolean debugPressed;
 	private boolean cancelDebug;
 
+        @Shadow
+        public int rightClickDelayTimer;
+
+        @Shadow
+        private int leftClickCounter;
+
 	// Don't see the benefit of logging the session ID, apart from for hackers.
 	// I have decompiled dodgy-looking Minecraft plugins, and seen code that takes advantage of this.
 	// This is mainly for the crash reporting feature, as I don't want users accounts to be hacked.
@@ -125,6 +131,16 @@ public abstract class MixinMinecraft implements AccessMinecraft, MCVer.Minecraft
 		return next;
 	}
 
+        @Inject(method = "clickMouse", at = @At("HEAD"))
+        private void clickMouse(CallbackInfo callbackInfo) {
+           leftClickCounter = 1;
+        }
+
+        @Inject(method = "rightClickMouse", at = @At(value = "FIELD", target = "Lnet/minecraft/client/Minecraft;rightClickDelayTimer:I", shift = At.Shift.AFTER))
+        private void rightClickMouse(final CallbackInfo callbackInfo) {
+            rightClickDelayTimer = fastPlace.getSpeedValue().get();
+        }
+
 	@Inject(method = "runGameLoop", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer" +
 			"/EntityRenderer;updateCameraAndRender(FJ)V", shift = At.Shift.BEFORE))
 	public void preRenderTick(CallbackInfo callback) {
@@ -143,7 +159,7 @@ public abstract class MixinMinecraft implements AccessMinecraft, MCVer.Minecraft
 	@Overwrite
 	public int getLimitFramerate() {
 		if((theWorld == null && !(currentScreen instanceof Screen)) || !Display.isActive()) {
-			return 30; // Only limit framerate to 30. This means there is no noticeable lag spike.
+			return 60; // Only limit framerate to 30. This means there is no noticeable lag spike.
 		}
 
 		return gameSettings.limitFramerate;
