@@ -132,16 +132,6 @@ public abstract class MixinMinecraft implements AccessMinecraft, MCVer.Minecraft
 		return next;
 	}
 
-        @Inject(method = "clickMouse", at = @At("HEAD"))
-        private void clickMouse(CallbackInfo callbackInfo) {
-           if(CpsMod.enabled) leftClickCounter = 0;
-        }
-
-        @Inject(method = "rightClickMouse", at = @At(value = "FIELD", target = "Lnet/minecraft/client/Minecraft;rightClickDelayTimer:I", shift = At.Shift.AFTER))
-        private void rightClickMouse(final CallbackInfo callbackInfo) {
-           if(CpsMod.enabled) rightClickDelayTimer = 1;
-        }
-
 	@Inject(method = "runGameLoop", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer" +
 			"/EntityRenderer;updateCameraAndRender(FJ)V", shift = At.Shift.BEFORE))
 	public void preRenderTick(CallbackInfo callback) {
