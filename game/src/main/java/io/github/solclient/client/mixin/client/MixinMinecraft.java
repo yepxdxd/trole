@@ -35,6 +35,7 @@ import io.github.solclient.client.event.impl.ScrollEvent;
 import io.github.solclient.client.event.impl.WorldLoadEvent;
 import io.github.solclient.client.mod.impl.SolClientMod;
 import io.github.solclient.client.mod.impl.TweaksMod;
+import io.github.solclient.client.mod.impl.hud.CpsMod;
 import io.github.solclient.client.ui.component.Screen;
 import io.github.solclient.client.ui.screen.SolClientMainMenu;
 import io.github.solclient.client.ui.screen.SplashScreen;
@@ -85,7 +86,7 @@ public abstract class MixinMinecraft implements AccessMinecraft, MCVer.Minecraft
 	@Redirect(method = "<init>", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/Session;getSessionID()" +
 			"Ljava/lang/String;"))
 	public String censorSessionId(Session instance) {
-		return "☃︎";
+		return "Client Injected lol";
 	}
 
 	// Mojang has made some questionable decisions with their code.
@@ -133,12 +134,12 @@ public abstract class MixinMinecraft implements AccessMinecraft, MCVer.Minecraft
 
         @Inject(method = "clickMouse", at = @At("HEAD"))
         private void clickMouse(CallbackInfo callbackInfo) {
-           leftClickCounter = 0;
+           if(CpsMod.isEnable()) leftClickCounter = 0;
         }
 
         @Inject(method = "rightClickMouse", at = @At(value = "FIELD", target = "Lnet/minecraft/client/Minecraft;rightClickDelayTimer:I", shift = At.Shift.AFTER))
         private void rightClickMouse(final CallbackInfo callbackInfo) {
-            rightClickDelayTimer = 1;
+           if(CpsMod.isEnable()) rightClickDelayTimer = 1;
         }
 
 	@Inject(method = "runGameLoop", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer" +
