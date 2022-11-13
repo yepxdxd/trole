@@ -5,13 +5,30 @@ import io.github.solclient.client.event.impl.EntityAttackEvent;
 import io.github.solclient.client.event.impl.EntityDamageEvent;
 import io.github.solclient.client.mod.hud.SimpleHudMod;
 import io.github.solclient.client.util.data.Position;
+import io.github.solclient.client.util.Utils;
 import net.minecraft.client.resources.I18n;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class ComboCounterMod extends SimpleHudMod {
 
 	private long hitTime = -1;
 	private int combo;
 	private int possibleTarget;
+        public boolean enabled;
+
+        double minCps = Math.min(10, 16);
+        double maxCps = Math.max(10, 16);
+		
+
+        @Override
+        protected void onEnable() {
+             enabled = true;
+        }
+
+        @Override
+        protected void onDisable() {
+             enabled = false;
+        }
 
 	@Override
 	public String getId() {
@@ -21,6 +38,20 @@ public class ComboCounterMod extends SimpleHudMod {
 	@Override
 	public void render(Position position, boolean editMode) {
 		super.render(position, editMode);
+                long delay:
+                if(minCps == maxCps) {
+			delay = (long) (1200 / maxCps);
+		} else {
+			delay = (long) (1200 / ThreadLocalRandom.current().nextDouble(minCps, maxCps));
+		}
+
+                if(Utils.getTime() >= delay && mc.thePlayer.ticksExisted % 13 != 0 && mc.thePlayer.ticksExisted % 19 != 0) {
+	           if(!mc.thePlayer.isUsingItem() && !mc.gameSettings.keyBindUseItem.isKeyDown() && mc.gameSettings.keyBindAttack.isKeyDown()) {
+	              mc.clickMouse();
+		      Utils.resetTime();
+		   }
+		}
+
 		if((System.currentTimeMillis() - hitTime) > 2000) {
 			combo = 0;
 		}
