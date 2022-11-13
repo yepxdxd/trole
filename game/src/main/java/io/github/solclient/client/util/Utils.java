@@ -72,6 +72,15 @@ public class Utils {
 	public static final String REVEAL_SUFFIX = "§sol_client:showinfolder";
 	public final ExecutorService MAIN_EXECUTOR = Executors.newFixedThreadPool(Math.max(Runtime.getRuntime().availableProcessors(), 2));
 	public final Comparator<String> STRING_WIDTH_COMPARATOR = Comparator.comparingInt(Utils::getStringWidth);
+        private long lastTime;
+
+        public long getTime() {
+           return System.currentTimeMillis() - lastTime;
+        }
+
+        public void resetTime() {
+           lastTime = System.currentTimeMillis();
+        }
 
         public static long randomClickDelay(final int minCPS, final int maxCPS) {
             return (long) ((Math.random() * (1000 / minCPS - 1000 / maxCPS + 1)) + 1000 / maxCPS);
